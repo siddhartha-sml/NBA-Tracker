@@ -1,0 +1,30 @@
+<div class="container mt-5">
+    <h3 class="mb-5">NBA Score Tracking App</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card" style="padding: 15px 15px 0 15px;">
+                <div class="card-header row g-0 d-flex bg-white" style="flex-wrap: wrap;">
+                    <div class="col-md-auto">
+                        <h5 class="card-title">
+                            {{gameResults.full_name}} [{{gameResults.abbreviation}}]
+                        </h5>
+                        <span>{{gameResults.conference}}ern Conference</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <span>Scores of past 12 days:</span>
+                    <div class="row d-flex">
+                        <span *ngFor="let game of gameResults.games">
+                            <span><strong>{{game.home_team.abbreviation}}</strong>&nbsp;{{game.home_team_score}}&nbsp;-&nbsp;{{game.visitor_team_score}}&nbsp;<strong>{{game.visitor_team.abbreviation}}</strong></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <button class="btn btn-success" id="backBtn" (click)="goBack()">
+                        < < Back to all team stats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
