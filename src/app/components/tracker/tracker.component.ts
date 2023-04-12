@@ -28,7 +28,7 @@ export interface TrackedTeam {
 export class TrackerComponent implements OnInit {
 
   teamsData: TrackedTeam[] = [];
-  teamIdTracked: number = 0;
+  teamIdTracked: string = '';
   teamsTracked: TrackedTeam[] = [];
   dates: string[] = [];
   lastResults: TrackedTeam[] = [];
@@ -47,8 +47,9 @@ export class TrackerComponent implements OnInit {
     if(sessionStorage.getItem('teams_tracked')) {
       this.teamsTracked = JSON.parse(sessionStorage.getItem('teams_tracked')!);
     }
-    if(sessionStorage.getItem('teams_data') == null)
+    if(sessionStorage.getItem('teams_data') == null || sessionStorage.getItem('teams_data') == undefined) {
       this.getTeamsData();
+    }
   }
 
   getTeamsData(): void {
@@ -60,8 +61,14 @@ export class TrackerComponent implements OnInit {
 
   trackTeam(): void {
     this.teamsData.forEach((team: TrackedTeam)=>{
-      if(team.id == this.teamIdTracked) {
-        if(this.teamsTracked.indexOf(team) == -1){
+      if(team.id == parseInt(this.teamIdTracked)) {
+        let is_team_tracked = false;
+          this.teamsTracked.forEach((t: TrackedTeam)=>{
+            if(t.id == parseInt(this.teamIdTracked)) {
+              is_team_tracked = true;
+            }
+          });
+        if(!is_team_tracked) {
           this.teamsTracked.push(team);
         }
       }
@@ -71,7 +78,7 @@ export class TrackerComponent implements OnInit {
   }
 
   getGamesData(): void {
-    this.apiService.get_games(this.teamIdTracked,this.getLast12Dates()).subscribe((res: GamesResponse)=>{
+    this.apiService.get_games(parseInt(this.teamIdTracked),this.getLast12Dates()).subscribe((res: GamesResponse)=>{
       this.lastResults = res['data'];
       sessionStorage.setItem('last_12_results_of_tracked_teams', JSON.stringify(this.lastResults));
       this.getLastResults();
@@ -126,7 +133,7 @@ export class TrackerComponent implements OnInit {
     this.formDict['avg_points_conceded'] = Math.round(points_conceded/this.formDict['games'].length);
 
     this.teamsTracked.forEach((team: TrackedTeam)=>{
-      if(team.id == this.teamIdTracked) {
+      if(team.id == parseInt(this.teamIdTracked)) {
         team['form'] = this.formDict.form;
         team['games'] = this.formDict.games;
         team['avg_points_scored'] = this.formDict.avg_points_scored;
